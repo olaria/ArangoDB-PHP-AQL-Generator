@@ -37,6 +37,7 @@ class AqlGen extends AbstractAql
     protected $skip;
     protected $limit;
     protected $return;
+    protected $update;
     protected $params = [];
     protected $isSubQuery = false;
 
@@ -184,6 +185,7 @@ class AqlGen extends AbstractAql
         $query .= $this->getSortString();
         $query .= $this->getLimitString();
         $query .= $this->getReturnString();
+        $query .= $this->getUpdateString();
         return $query;
     }
 
@@ -258,11 +260,16 @@ class AqlGen extends AbstractAql
             }
         }
 
-        if (is_null($this->return)) {
+        if (is_null($this->return) && is_null($this->update)) {
             $this->setReturn($this->for);
         }
 
-        return $this->return->get();
+        return !is_null($this->return) ? $this->return->get() : '';
+    }
+
+    protected function getUpdateString()
+    {
+        return !is_null($this->update) ? $this->update->get() : '';
     }
 
     /**
@@ -307,6 +314,18 @@ class AqlGen extends AbstractAql
     public function setReturn($return)
     {
         $this->return = new AqlReturn($return);
+        return $this;
+    }
+
+    /**
+     * Set a UPDATE part of query
+     * @param string $collectionId
+     * @param string|array $changedAttributes
+     * @return $this
+     */
+    public function update($collectionId, $changedAttributes)
+    {
+        $this->update = new AqlUpdate($this->for, $collectionId, $changedAttributes);
         return $this;
     }
 

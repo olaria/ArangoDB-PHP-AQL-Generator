@@ -34,6 +34,17 @@ class AqlGenTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("FOR u IN users\nRETURN {'name': u.name}", $string);
     }
 
+    public function testUpdate()
+    {
+        $aql = AqlGen::query('u', 'users')->update('users', "{status: 'inactive'}");
+        $this->assertEquals("FOR u IN users\nUPDATE u WITH {status: 'inactive'} IN users", $aql->get());
+
+        $aql = AqlGen::query('u', 'users')
+            ->filter('u.active = true')
+            ->update('users', "{status: 'inactive'}");
+        $this->assertEquals("FOR u IN users\n\tFILTER u.active = true\nUPDATE u WITH {status: 'inactive'} IN users", $aql->get());
+    }
+
     public function testSort()
     {
         $aql = AqlGen::query('u', 'users')->sort('u.name');
