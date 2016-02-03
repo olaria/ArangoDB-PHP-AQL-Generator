@@ -7,7 +7,7 @@ namespace tarsys\AqlGen;
  *
  * @author Tarsis Lima
  */
-class AqlReplace extends AbstractAql
+class AqlDelete extends AbstractAql
 {
     const OPERATOR = 'DELETE';
 
